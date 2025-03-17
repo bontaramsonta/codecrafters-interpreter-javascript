@@ -17,7 +17,7 @@ if (command !== "tokenize") {
 
 const filename = args[1];
 
-const CHARS = {
+const SINGLE_CHAR_TOKENS = {
   "(": "LEFT_PAREN ( null",
   ")": "RIGHT_PAREN ) null",
   "{": "LEFT_BRACE { null",
@@ -28,7 +28,15 @@ const CHARS = {
   "+": "PLUS + null",
   "-": "MINUS - null",
   ";": "SEMICOLON ; null",
-  "*": "STAR * null",
+  ">": "GREATER > null",
+  "<": "LESS < null",
+};
+
+const DOUBLE_CHAR_TOKENS = {
+  "==": "EQUAL_EQUAL == null",
+  "!=": "BANG_EQUAL != null",
+  ">=": "GREATER_EQUAL >= null",
+  "<=": "LESS_EQUAL <= null",
 };
 
 const fileContent = fs.readFileSync(filename, "utf8");
@@ -39,30 +47,16 @@ if (fileContent.length !== 0) {
   for (let i = 0; i < lines.length; i++) {
     for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
-      if (char == "=") {
-        const nextChar = lines[i][j + 1];
-        if (nextChar == "=") {
-          log("EQUAL_EQUAL == null");
-          j += 1;
-        } else {
-          log("EQUAL = null");
-        }
-      } else if (char == "!") {
-        const nextChar = lines[i][j + 1];
-        if (nextChar == "=") {
-          log("BANG_EQUAL != null");
-          j += 1;
-        } else {
-          log("BANG ! null");
-        }
+      const twoChar = char + lines[i][j + 1];
+
+      if (DOUBLE_CHAR_TOKENS[twoChar]) {
+        log(DOUBLE_CHAR_TOKENS[twoChar]);
+        j += 1;
+      } else if (SINGLE_CHAR_TOKENS[char]) {
+        log(SINGLE_CHAR_TOKENS[char]);
       } else {
-        const msg = CHARS[char];
-        if (!msg) {
-          error(`[line ${i + 1}] Error: Unexpected character: ${char}`);
-          haveLexicalError = true;
-        } else {
-          log(msg);
-        }
+        error(`[line ${i + 1}] Error: Unexpected character: ${char}`);
+        haveLexicalError = true;
       }
     }
   }
