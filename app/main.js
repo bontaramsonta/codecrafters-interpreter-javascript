@@ -1,4 +1,4 @@
-import { log } from "console";
+import { error, log } from "console";
 import fs from "fs";
 
 const args = process.argv.slice(2); // Skip the first two arguments (node path and script path)
@@ -17,25 +17,29 @@ if (command !== "tokenize") {
 
 const filename = args[1];
 
+const CHARS = {
+  "(": "LEFT_PAREN ( null",
+  ")": "RIGHT_PAREN ) null",
+  "{": "LEFT_BRACE { null",
+  "}": "RIGHT_BRACE } null",
+  "*": "STAR * null",
+  ".": "DOT . null",
+  ",": "COMMA , null",
+  "+": "PLUS + null",
+  "*": "STAR * null",
+};
+
 const fileContent = fs.readFileSync(filename, "utf8");
 
 if (fileContent.length !== 0) {
   for (const line of fileContent.split("\n")) {
     for (const char of line.split("")) {
-      switch (char) {
-        case "(":
-          log("LEFT_PAREN ( null");
-          break;
-        case ")":
-          log("RIGHT_PAREN ) null");
-          break;
-        case "{":
-          log("LEFT_BRACE { null");
-          break;
-        case "}":
-          log("RIGHT_BRACE } null");
-          break;
+      const msg = CHARS[char];
+      if (!msg) {
+        error(`UNKNOWN: ${char}`);
+        process.exit(1);
       }
+      log(msg);
     }
   }
   log("EOF  null");
