@@ -34,8 +34,8 @@ const CHARS = {
 const fileContent = fs.readFileSync(filename, "utf8");
 
 if (fileContent.length !== 0) {
-  fileContent.split("\n").forEach((lineIdx, line) => {
-    line.split("").forEach((charIdx, char) => {
+  fileContent.split("\n").forEach((line, lineIdx) => {
+    line.split("").forEach((char) => {
       const msg = CHARS[char];
       if (!msg) {
         error(`[line ${lineIdx + 1}] Error: Unexpected character: ${char}`);
@@ -44,15 +44,6 @@ if (fileContent.length !== 0) {
       log(msg);
     });
   });
-  for (const line of fileContent.split("\n")) {
-    for (const char of line.split("")) {
-      const msg = CHARS[char];
-      if (!msg) {
-        break;
-      }
-      log(msg);
-    }
-  }
   log("EOF  null");
 } else {
   log("EOF  null");
