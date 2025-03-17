@@ -26,6 +26,8 @@ const CHARS = {
   ".": "DOT . null",
   ",": "COMMA , null",
   "+": "PLUS + null",
+  "-": "MINUS - null",
+  ";": "SEMICOLON ; null",
   "*": "STAR * null",
 };
 
@@ -36,8 +38,8 @@ if (fileContent.length !== 0) {
     for (const char of line.split("")) {
       const msg = CHARS[char];
       if (!msg) {
-        error(`UNKNOWN: ${char}`);
-        process.exit(1);
+        error("Unexpected character.");
+        break;
       }
       log(msg);
     }
