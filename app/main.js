@@ -34,17 +34,22 @@ const CHARS = {
 const fileContent = fs.readFileSync(filename, "utf8");
 
 if (fileContent.length !== 0) {
+  let haveLexicalError = false;
   fileContent.split("\n").forEach((line, lineIdx) => {
     line.split("").forEach((char) => {
       const msg = CHARS[char];
       if (!msg) {
         error(`[line ${lineIdx + 1}] Error: Unexpected character: ${char}`);
-        process.exit(65);
+        haveLexicalError = true;
+      } else {
+        log(msg);
       }
-      log(msg);
     });
   });
   log("EOF  null");
+  if (haveLexicalError) {
+    process.exit(65);
+  }
 } else {
   log("EOF  null");
 }
