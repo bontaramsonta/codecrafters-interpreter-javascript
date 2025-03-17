@@ -47,6 +47,14 @@ if (fileContent.length !== 0) {
         } else {
           log("EQUAL = null");
         }
+      } else if (char == "!") {
+        const nextChar = lines[i][j + 1];
+        if (nextChar == "=") {
+          log("BANG_EQUAL != null");
+          j += 1;
+        } else {
+          log("BANG ! null");
+        }
       } else {
         const msg = CHARS[char];
         if (!msg) {
