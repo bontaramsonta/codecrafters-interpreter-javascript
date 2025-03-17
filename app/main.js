@@ -31,8 +31,10 @@ if (fileContent.length !== 0) {
           break;
         case "{":
           log("LEFT_BRACE { null");
+          break;
         case "}":
           log("RIGHT_BRACE } null");
+          break;
       }
     }
   }
