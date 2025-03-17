@@ -40,7 +40,7 @@ if (fileContent.length !== 0) {
     for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
       if (char == "=") {
-        const nextChar = lines[i][j];
+        const nextChar = lines[i][j + 1];
         if (nextChar == "=") {
           log("EQUAL_EQUAL == null");
           j += 1;
