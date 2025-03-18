@@ -42,9 +42,29 @@ const DOUBLE_CHAR_TOKENS = {
   "<=": "LESS_EQUAL <= null",
 };
 
-const IGNORE_TOKENS = [" ", "\t"];
-const IGNORE_DOUBLE_CHAR_TOKENS = ["//"];
-const STRING_LITERAL_MODE_TOKENS = ['"'];
+const IGNORE_TOKENS = {
+  " ": 1,
+  "\t": 1,
+};
+const IGNORE_DOUBLE_CHAR_TOKENS = {
+  "//": 1,
+};
+const STRING_LITERAL_MODE_TOKENS = {
+  '"': 1,
+};
+const NUMBER_LITERAL_MODE_TOKENS = {
+  0: 1,
+  1: 1,
+  2: 1,
+  3: 1,
+  4: 1,
+  5: 1,
+  6: 1,
+  7: 1,
+  8: 1,
+  9: 1,
+  ".": 1,
+};
 
 const fileContent = fs.readFileSync(filename, "utf8");
 
@@ -53,27 +73,34 @@ if (fileContent.length !== 0) {
   const lines = fileContent.split("\n");
   outer: for (let i = 0; i < lines.length; i++) {
     let inStringLiteralMode = false;
+    let inNumberLiterMode = false;
     let literalAccumulator = "";
 
     inner: for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
       const twoChar = char + lines[i][j + 1];
-      if (inStringLiteralMode) {
-        if (STRING_LITERAL_MODE_TOKENS.includes(char)) {
+      if (inNumberLiterMode) {
+        if (NUMBER_LITERAL_MODE_TOKENS[char]) {
+          literalAccumulator += char;
+        }
+        if (j == lines[i].length - 1 || !NUMBER_LITERAL_MODE_TOKENS[char]) {
+          log(`NUMBER ${Number.parseFloat(char).toFixed(2)} char`);
+          inNumberLiterMode = false;
+          literalAccumulator = "";
+        }
+      } else if (inStringLiteralMode) {
+        if (STRING_LITERAL_MODE_TOKENS[char]) {
           log(`STRING \"${literalAccumulator}\" ${literalAccumulator}`);
           inStringLiteralMode = false;
           literalAccumulator = "";
-          continue inner;
+        } else {
+          literalAccumulator += char;
         }
-        literalAccumulator += char;
-      } else if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
+      } else if (IGNORE_DOUBLE_CHAR_TOKENS[twoChar]) {
         continue outer;
-      } else if (
-        !inStringLiteralMode &&
-        STRING_LITERAL_MODE_TOKENS.includes(char)
-      ) {
+      } else if (!inStringLiteralMode && STRING_LITERAL_MODE_TOKENS[char]) {
         inStringLiteralMode = true;
-      } else if (IGNORE_TOKENS.includes(char)) {
+      } else if (IGNORE_TOKENS[char]) {
         continue inner;
       } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
         log(DOUBLE_CHAR_TOKENS[twoChar]);
