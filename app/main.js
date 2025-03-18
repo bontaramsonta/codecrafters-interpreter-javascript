@@ -66,8 +66,8 @@ const NUMBER_LITERAL_MODE_TOKENS = {
   ".": 1,
 };
 
-// const fileContent = fs.readFileSync(filename, "utf8");
-const fileContent = "95";
+const fileContent = fs.readFileSync(filename, "utf8");
+// const fileContent = "95";
 
 if (fileContent.length !== 0) {
   let haveLexicalError = false;
