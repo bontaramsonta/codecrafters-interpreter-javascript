@@ -87,6 +87,7 @@ if (fileContent.length !== 0) {
     }
     if (inStringLiteralMode) {
       error(`[line ${i + 1}] Error: Unterminated string.`);
+      haveLexicalError = true;
     }
   }
   log("EOF  null");
