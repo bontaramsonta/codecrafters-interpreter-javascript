@@ -67,6 +67,7 @@ const NUMBER_LITERAL_MODE_TOKENS = {
 };
 
 const fileContent = fs.readFileSync(filename, "utf8");
+// const fileContent = "6317.4493";
 
 if (fileContent.length !== 0) {
   let haveLexicalError = false;
@@ -90,6 +91,7 @@ if (fileContent.length !== 0) {
             ).toLocaleString("en", {
               useGrouping: false,
               minimumFractionDigits: 1,
+              maximumFractionDigits: 4,
             })}`,
           );
           inNumberLiteralMode = false;
