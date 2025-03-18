@@ -73,19 +73,19 @@ if (fileContent.length !== 0) {
   const lines = fileContent.split("\n");
   outer: for (let i = 0; i < lines.length; i++) {
     let inStringLiteralMode = false;
-    let inNumberLiterMode = false;
+    let inNumberLiteralMode = false;
     let literalAccumulator = "";
 
     inner: for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
       const twoChar = char + lines[i][j + 1];
-      if (inNumberLiterMode) {
+      if (inNumberLiteralMode) {
         if (NUMBER_LITERAL_MODE_TOKENS[char]) {
           literalAccumulator += char;
         }
         if (j == lines[i].length - 1 || !NUMBER_LITERAL_MODE_TOKENS[char]) {
           log(`NUMBER ${Number.parseFloat(char).toFixed(2)} char`);
-          inNumberLiterMode = false;
+          inNumberLiteralMode = false;
           literalAccumulator = "";
         }
       } else if (inStringLiteralMode) {
@@ -100,6 +100,8 @@ if (fileContent.length !== 0) {
         continue outer;
       } else if (!inStringLiteralMode && STRING_LITERAL_MODE_TOKENS[char]) {
         inStringLiteralMode = true;
+      } else if (!inNumberLiteralMode && NUMBER_LITERAL_MODE_TOKENS[char]) {
+        inNumberLiteralMode = true;
       } else if (IGNORE_TOKENS[char]) {
         continue inner;
       } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
