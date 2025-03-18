@@ -83,8 +83,7 @@ if (fileContent.length !== 0) {
       const twoChar = char + lines[i][j + 1];
       if (!inNumberLiteralMode && char == ".") {
         log("DOT . null");
-      }
-      if (inNumberLiteralMode) {
+      } else if (inNumberLiteralMode) {
         if (NUMBER_LITERAL_MODE_TOKENS[char]) {
           literalAccumulator += char;
         }
