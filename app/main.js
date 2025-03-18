@@ -28,6 +28,7 @@ const SINGLE_CHAR_TOKENS = {
   "+": "PLUS + null",
   "-": "MINUS - null",
   ";": "SEMICOLON ; null",
+  "=": "EQUAL = null",
   "!": "BANG ! null",
   ">": "GREATER > null",
   "<": "LESS < null",
