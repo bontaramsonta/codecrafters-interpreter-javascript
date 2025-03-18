@@ -32,6 +32,7 @@ const SINGLE_CHAR_TOKENS = {
   "!": "BANG ! null",
   ">": "GREATER > null",
   "<": "LESS < null",
+  "/": "SLASH / null",
 };
 
 const DOUBLE_CHAR_TOKENS = {
@@ -41,17 +42,21 @@ const DOUBLE_CHAR_TOKENS = {
   "<=": "LESS_EQUAL <= null",
 };
 
+const IGNORE_DOUBLE_CHAR_TOKENS = ["//"];
+
 const fileContent = fs.readFileSync(filename, "utf8");
 
 if (fileContent.length !== 0) {
   let haveLexicalError = false;
   const lines = fileContent.split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    for (let j = 0; j < lines[i].length; j++) {
+  outer: for (let i = 0; i < lines.length; i++) {
+    inner: for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
       const twoChar = char + lines[i][j + 1];
 
-      if (DOUBLE_CHAR_TOKENS[twoChar]) {
+      if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
+        continue inner;
+      } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
         log(DOUBLE_CHAR_TOKENS[twoChar]);
         j += 1;
       } else if (SINGLE_CHAR_TOKENS[char]) {
