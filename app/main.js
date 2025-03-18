@@ -66,8 +66,7 @@ if (fileContent.length !== 0) {
           continue inner;
         }
         literalAccumulator += char;
-      }
-      if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
+      } else if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
         continue outer;
       } else if (
         !inStringLiteralMode &&
