@@ -44,6 +44,7 @@ const DOUBLE_CHAR_TOKENS = {
 
 const IGNORE_TOKENS = [" ", "\t"];
 const IGNORE_DOUBLE_CHAR_TOKENS = ["//"];
+const STRING_LITERAL_MODE_TOKENS = ['"'];
 
 const fileContent = fs.readFileSync(filename, "utf8");
 
@@ -51,12 +52,28 @@ if (fileContent.length !== 0) {
   let haveLexicalError = false;
   const lines = fileContent.split("\n");
   outer: for (let i = 0; i < lines.length; i++) {
+    let inStringLiteralMode = false;
+    let literalAccumulator = "";
+
     inner: for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
       const twoChar = char + lines[i][j + 1];
-
+      if (inStringLiteralMode) {
+        if (STRING_LITERAL_MODE_TOKENS.includes(char)) {
+          log(`STRING \"${literalAccumulator}\" ${literalAccumulator}`);
+          inStringLiteralMode = false;
+          literalAccumulator = "";
+          continue inner;
+        }
+        literalAccumulator += char;
+      }
       if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
-        break inner;
+        continue outer;
+      } else if (
+        !inStringLiteralMode &&
+        STRING_LITERAL_MODE_TOKENS.includes(char)
+      ) {
+        inStringLiteralMode = true;
       } else if (IGNORE_TOKENS.includes(char)) {
         continue inner;
       } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
@@ -68,6 +85,9 @@ if (fileContent.length !== 0) {
         error(`[line ${i + 1}] Error: Unexpected character: ${char}`);
         haveLexicalError = true;
       }
+    }
+    if (inStringLiteralMode) {
+      error(`[line ${i + 1}] Error: Unterminated string.`);
     }
   }
   log("EOF  null");
