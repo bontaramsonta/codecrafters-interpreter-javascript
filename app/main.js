@@ -88,6 +88,8 @@ if (fileContent.length !== 0) {
           // edge case
           if (literalAccumulator == ".") {
             log("DOT . null");
+            inNumberLiteralMode = false;
+            literalAccumulator = "";
             continue inner;
           }
           log(
