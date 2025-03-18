@@ -96,7 +96,9 @@ if (fileContent.length !== 0) {
           );
           inNumberLiteralMode = false;
           literalAccumulator = "";
-          j -= 1; // run the same char again
+          if (!NUMBER_LITERAL_MODE_TOKENS[char]) {
+            j -= 1; // run the same char again
+          }
         }
       } else if (inStringLiteralMode) {
         if (STRING_LITERAL_MODE_TOKENS[char]) {
