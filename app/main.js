@@ -42,6 +42,7 @@ const DOUBLE_CHAR_TOKENS = {
   "<=": "LESS_EQUAL <= null",
 };
 
+const IGNORE_TOKENS = [" ", "\t"];
 const IGNORE_DOUBLE_CHAR_TOKENS = ["//"];
 
 const fileContent = fs.readFileSync(filename, "utf8");
@@ -56,6 +57,8 @@ if (fileContent.length !== 0) {
 
       if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
         break inner;
+      } else if (IGNORE_TOKENS.includes(char)) {
+        continue inner;
       } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
         log(DOUBLE_CHAR_TOKENS[twoChar]);
         j += 1;
