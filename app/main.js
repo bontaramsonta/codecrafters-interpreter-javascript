@@ -85,6 +85,11 @@ if (fileContent.length !== 0) {
           literalAccumulator += char;
         }
         if (j == lines[i].length - 1 || !NUMBER_LITERAL_MODE_TOKENS[char]) {
+          // edge case
+          if (literalAccumulator == ".") {
+            log("DOT . null");
+            continue inner;
+          }
           log(
             `NUMBER ${literalAccumulator} ${Number(
               literalAccumulator,
