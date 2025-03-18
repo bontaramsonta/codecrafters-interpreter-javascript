@@ -67,7 +67,6 @@ const NUMBER_LITERAL_MODE_TOKENS = {
 };
 
 const fileContent = fs.readFileSync(filename, "utf8");
-// const fileContent = "95";
 
 if (fileContent.length !== 0) {
   let haveLexicalError = false;
@@ -86,7 +85,12 @@ if (fileContent.length !== 0) {
         }
         if (j == lines[i].length - 1 || !NUMBER_LITERAL_MODE_TOKENS[char]) {
           log(
-            `NUMBER ${literalAccumulator} ${Number.parseFloat(literalAccumulator).toFixed(1)}`,
+            `NUMBER ${literalAccumulator} ${Number(
+              literalAccumulator,
+            ).toLocaleString("en", {
+              useGrouping: false,
+              minimumFractionDigits: 1,
+            })}`,
           );
           inNumberLiteralMode = false;
           literalAccumulator = "";
