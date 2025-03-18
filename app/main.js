@@ -67,7 +67,7 @@ const NUMBER_LITERAL_MODE_TOKENS = {
 };
 
 const fileContent = fs.readFileSync(filename, "utf8");
-// const fileContent = "6317.4493";
+// const fileContent = "{ }\n((-.*, ))";
 
 if (fileContent.length !== 0) {
   let haveLexicalError = false;
@@ -79,6 +79,7 @@ if (fileContent.length !== 0) {
 
     inner: for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
+      // log("ON:", char, inNumberLiteralMode);
       const twoChar = char + lines[i][j + 1];
       if (inNumberLiteralMode) {
         if (NUMBER_LITERAL_MODE_TOKENS[char]) {
@@ -88,19 +89,17 @@ if (fileContent.length !== 0) {
           // edge case
           if (literalAccumulator == ".") {
             log("DOT . null");
-            inNumberLiteralMode = false;
-            literalAccumulator = "";
-            continue inner;
+          } else {
+            log(
+              `NUMBER ${literalAccumulator} ${Number(
+                literalAccumulator,
+              ).toLocaleString("en", {
+                useGrouping: false,
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 4,
+              })}`,
+            );
           }
-          log(
-            `NUMBER ${literalAccumulator} ${Number(
-              literalAccumulator,
-            ).toLocaleString("en", {
-              useGrouping: false,
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 4,
-            })}`,
-          );
           inNumberLiteralMode = false;
           literalAccumulator = "";
           if (!NUMBER_LITERAL_MODE_TOKENS[char]) {
