@@ -81,25 +81,23 @@ if (fileContent.length !== 0) {
       const char = lines[i][j];
       // log("ON:", char, inNumberLiteralMode);
       const twoChar = char + lines[i][j + 1];
+      if (!inNumberLiteralMode && char == ".") {
+        log("DOT . null");
+      }
       if (inNumberLiteralMode) {
         if (NUMBER_LITERAL_MODE_TOKENS[char]) {
           literalAccumulator += char;
         }
         if (j == lines[i].length - 1 || !NUMBER_LITERAL_MODE_TOKENS[char]) {
-          // edge case
-          if (literalAccumulator == ".") {
-            log("DOT . null");
-          } else {
-            log(
-              `NUMBER ${literalAccumulator} ${Number(
-                literalAccumulator,
-              ).toLocaleString("en", {
-                useGrouping: false,
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 4,
-              })}`,
-            );
-          }
+          log(
+            `NUMBER ${literalAccumulator} ${Number(
+              literalAccumulator,
+            ).toLocaleString("en", {
+              useGrouping: false,
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 4,
+            })}`,
+          );
           inNumberLiteralMode = false;
           literalAccumulator = "";
           if (!NUMBER_LITERAL_MODE_TOKENS[char]) {
