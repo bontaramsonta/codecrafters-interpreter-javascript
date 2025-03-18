@@ -55,7 +55,7 @@ if (fileContent.length !== 0) {
       const twoChar = char + lines[i][j + 1];
 
       if (IGNORE_DOUBLE_CHAR_TOKENS.includes(twoChar)) {
-        continue inner;
+        break inner;
       } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
         log(DOUBLE_CHAR_TOKENS[twoChar]);
         j += 1;
