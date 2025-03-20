@@ -80,36 +80,41 @@ function isIdentifierPart(char) {
 }
 
 const fileContent = fs.readFileSync(filename, "utf8");
-// const fileContent = "foo bar";
+// const fileContent = "_123world_ 6ar bar _hello f00";
+
+const MODES = {
+  NONE: 1,
+  IDENTIFIER: 2,
+  NUMBER: 3,
+  STRING: 4,
+};
 
 if (fileContent.length !== 0) {
   let haveLexicalError = false;
   const lines = fileContent.split("\n");
   outer: for (let i = 0; i < lines.length; i++) {
-    let inStringLiteralMode = false;
-    let inNumberLiteralMode = false;
-    let identifierMode = false;
+    let mode = MODES.NONE;
     let accumulator = "";
 
     inner: for (let j = 0; j < lines[i].length; j++) {
       const char = lines[i][j];
       const twoChar = char + lines[i][j + 1];
-      // log("X", char, identifierMode);
-      if (identifierMode) {
+      // log("X", char, mode);
+      if (mode == MODES.IDENTIFIER) {
         if (isIdentifierPart(char)) {
           accumulator += char;
         } else {
           log(`IDENTIFIER ${accumulator} null`);
           accumulator = "";
-          identifierMode = false;
+          mode = MODES.NONE;
           j -= 1;
         }
-      } else if (!identifierMode && isIdentifierStart(char)) {
+      } else if (mode == MODES.NONE && isIdentifierStart(char)) {
         accumulator += char;
-        identifierMode = true;
-      } else if (!inNumberLiteralMode && char == ".") {
+        mode = MODES.IDENTIFIER;
+      } else if (mode == MODES.NONE && char == ".") {
         log("DOT . null");
-      } else if (inNumberLiteralMode) {
+      } else if (mode == MODES.NUMBER) {
         if (NUMBER_LITERAL_MODE_TOKENS[char]) {
           accumulator += char;
         }
@@ -121,26 +126,26 @@ if (fileContent.length !== 0) {
               maximumFractionDigits: 4,
             })}`,
           );
-          inNumberLiteralMode = false;
+          mode = MODES.NONE;
           accumulator = "";
           if (!NUMBER_LITERAL_MODE_TOKENS[char]) {
             j -= 1; // run the same char again
           }
         }
-      } else if (inStringLiteralMode) {
+      } else if (mode == MODES.STRING) {
         if (STRING_LITERAL_MODE_TOKENS[char]) {
           log(`STRING \"${accumulator}\" ${accumulator}`);
-          inStringLiteralMode = false;
+          mode = MODES.NONE;
           accumulator = "";
         } else {
           accumulator += char;
         }
       } else if (IGNORE_DOUBLE_CHAR_TOKENS[twoChar]) {
         continue outer;
-      } else if (!inStringLiteralMode && STRING_LITERAL_MODE_TOKENS[char]) {
-        inStringLiteralMode = true;
-      } else if (!inNumberLiteralMode && NUMBER_LITERAL_MODE_TOKENS[char]) {
-        inNumberLiteralMode = true;
+      } else if (mode == MODES.NONE && STRING_LITERAL_MODE_TOKENS[char]) {
+        mode = MODES.STRING;
+      } else if (mode == MODES.NONE && NUMBER_LITERAL_MODE_TOKENS[char]) {
+        mode = MODES.NUMBER;
         accumulator += char;
       } else if (IGNORE_TOKENS[char]) {
         continue inner;
@@ -154,11 +159,11 @@ if (fileContent.length !== 0) {
         haveLexicalError = true;
       }
     }
-    if (inStringLiteralMode) {
+    if (mode == MODES.STRING) {
       error(`[line ${i + 1}] Error: Unterminated string.`);
       haveLexicalError = true;
     }
-    if (identifierMode) {
+    if (mode == MODES.IDENTIFIER) {
       log(`IDENTIFIER ${accumulator} null`);
     }
   }
