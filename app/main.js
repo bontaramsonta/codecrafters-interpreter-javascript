@@ -174,7 +174,7 @@ if (fileContent.length !== 0) {
         mode = MODES.STRING;
       } else if (mode == MODES.NONE && NUMBER_LITERAL_MODE_TOKENS[char]) {
         mode = MODES.NUMBER;
-        accumulator += char;
+        j -= 1;
       } else if (IGNORE_TOKENS[char]) {
         continue inner;
       } else if (DOUBLE_CHAR_TOKENS[twoChar]) {
