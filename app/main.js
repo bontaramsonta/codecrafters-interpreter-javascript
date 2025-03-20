@@ -66,24 +66,24 @@ const NUMBER_LITERAL_MODE_TOKENS = {
   ".": 1,
 };
 
-const KEYWORDS = [
-  "and",
-  "class",
-  "else",
-  "false",
-  "for",
-  "fun",
-  "if",
-  "nil",
-  "or",
-  "print",
-  "return",
-  "super",
-  "this",
-  "true",
-  "var",
-  "while",
-];
+const KEYWORDS = {
+  and: "AND",
+  class: "CLASS",
+  else: "ELSE",
+  false: "FALSE",
+  for: "FOR",
+  fun: "FUN",
+  if: "IF",
+  nil: "NIL",
+  or: "OR",
+  print: "PRINT",
+  return: "RETURN",
+  super: "SUPER",
+  this: "THIS",
+  true: "TRUE",
+  var: "VAR",
+  while: "WHILE",
+};
 
 function isIdentifierStart(char) {
   return (
@@ -121,8 +121,9 @@ if (fileContent.length !== 0) {
           accumulator += char;
         }
         if (j == lines[i].length - 1 || !isIdentifierPart(char)) {
-          if (KEYWORDS.includes(accumulator)) {
-            log(`KEYWORD ${accumulator} null`);
+          const resultKey = KEYWORDS[accumulator];
+          if (resultKey) {
+            log(`${resultKey} ${accumulator} null`);
           } else {
             log(`IDENTIFIER ${accumulator} null`);
           }
