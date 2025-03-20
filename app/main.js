@@ -66,6 +66,25 @@ const NUMBER_LITERAL_MODE_TOKENS = {
   ".": 1,
 };
 
+const KEYWORDS = [
+  "and",
+  "class",
+  "else",
+  "false",
+  "for",
+  "fun",
+  "if",
+  "nil",
+  "or",
+  "print",
+  "return",
+  "super",
+  "this",
+  "true",
+  "var",
+  "while",
+];
+
 function isIdentifierStart(char) {
   return (
     (char >= "a" && char <= "z") || (char >= "A" && char <= "Z") || char === "_"
@@ -98,18 +117,24 @@ if (fileContent.length !== 0) {
       const twoChar = char + lines[i][j + 1];
       // log("X", char, mode);
       if (mode == MODES.IDENTIFIER) {
-        if (isIdentifierPart(char)) {
-          accumulator += char;
-        } else {
-          log(`IDENTIFIER ${accumulator} null`);
-          accumulator = "";
-          mode = MODES.NONE;
-          j -= 1;
+        if (j == lines[i].length - 1 || !isIdentifierPart(char)) {
+          if (KEYWORDS.includes(accumulator)) {
+            log(`KEYWORD ${accumulator} null`);
+          } else {
+            log(`IDENTIFIER ${accumulator} null`);
+          }
+          if (j != lines[i].length - 1) {
+            accumulator = "";
+            mode = MODES.NONE;
+            j -= 1;
+          }
         }
+        accumulator += char;
       } else if (mode == MODES.NONE && isIdentifierStart(char)) {
         accumulator += char;
         mode = MODES.IDENTIFIER;
       } else if (mode == MODES.NONE && char == ".") {
+        // NUMBER edge case
         log("DOT . null");
       } else if (mode == MODES.NUMBER) {
         if (NUMBER_LITERAL_MODE_TOKENS[char]) {
@@ -123,9 +148,9 @@ if (fileContent.length !== 0) {
               maximumFractionDigits: 4,
             })}`,
           );
-          mode = MODES.NONE;
-          accumulator = "";
           if (!NUMBER_LITERAL_MODE_TOKENS[char]) {
+            mode = MODES.NONE;
+            accumulator = "";
             j -= 1; // run the same char again
           }
         }
@@ -134,6 +159,9 @@ if (fileContent.length !== 0) {
           log(`STRING \"${accumulator}\" ${accumulator}`);
           mode = MODES.NONE;
           accumulator = "";
+        } else if (j == lines[i].length - 1) {
+          error(`[line ${i + 1}] Error: Unterminated string.`);
+          haveLexicalError = true;
         } else {
           accumulator += char;
         }
@@ -155,13 +183,6 @@ if (fileContent.length !== 0) {
         error(`[line ${i + 1}] Error: Unexpected character: ${char}`);
         haveLexicalError = true;
       }
-    }
-    if (mode == MODES.STRING) {
-      error(`[line ${i + 1}] Error: Unterminated string.`);
-      haveLexicalError = true;
-    }
-    if (mode == MODES.IDENTIFIER) {
-      log(`IDENTIFIER ${accumulator} null`);
     }
   }
   log("EOF  null");
