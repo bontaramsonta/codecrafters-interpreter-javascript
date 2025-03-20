@@ -68,10 +68,7 @@ const NUMBER_LITERAL_MODE_TOKENS = {
 
 function isIdentifierStart(char) {
   return (
-    (char >= "a" && char <= "z") ||
-    (char >= "A" && char <= "Z") ||
-    char === "$" ||
-    char === "_"
+    (char >= "a" && char <= "z") || (char >= "A" && char <= "Z") || char === "_"
   );
 }
 
@@ -80,7 +77,7 @@ function isIdentifierPart(char) {
 }
 
 const fileContent = fs.readFileSync(filename, "utf8");
-// const fileContent = "_123world_ 6ar bar _hello f00";
+// const fileContent = "()  #\t{}\n@\n$\n+++\n// Let's Go!\n+++\n#";
 
 const MODES = {
   NONE: 1,
