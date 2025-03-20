@@ -96,7 +96,7 @@ function isIdentifierPart(char) {
 }
 
 const fileContent = fs.readFileSync(filename, "utf8");
-// const fileContent = "()  #\t{}\n@\n$\n+++\n// Let's Go!\n+++\n#";
+// const fileContent = "nil";
 
 const MODES = {
   NONE: 1,
@@ -117,6 +117,9 @@ if (fileContent.length !== 0) {
       const twoChar = char + lines[i][j + 1];
       // log("X", char, mode);
       if (mode == MODES.IDENTIFIER) {
+        if (isIdentifierPart(char)) {
+          accumulator += char;
+        }
         if (j == lines[i].length - 1 || !isIdentifierPart(char)) {
           if (KEYWORDS.includes(accumulator)) {
             log(`KEYWORD ${accumulator} null`);
@@ -129,7 +132,6 @@ if (fileContent.length !== 0) {
             j -= 1;
           }
         }
-        accumulator += char;
       } else if (mode == MODES.NONE && isIdentifierStart(char)) {
         accumulator += char;
         mode = MODES.IDENTIFIER;
